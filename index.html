@@ -2,321 +2,526 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#4A90E2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#6366F1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Field Reporting Assist - Modern Sales Force Automation">
+    
     <title>Field Reporting Assist</title>
+    
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2910/2910791.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2910/2910791.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Leaflet CSS (for maps) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Splash Screen -->
+    <!-- ============================================
+         SPLASH SCREEN
+         ============================================ -->
     <div id="splashScreen" class="splash-screen">
         <div class="splash-content">
-            <div class="splash-logo">
-                <img id="splashLogo" src="" alt="Logo">
+            <div class="splash-logo-container">
+                <div class="splash-logo-ring"></div>
+                <div class="splash-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
             </div>
             <h1 class="splash-title">Field Reporting Assist</h1>
+            <p class="splash-subtitle">Smart Sales Force Automation</p>
             <div class="splash-loader">
-                <div class="loader-bar"></div>
+                <div class="splash-loader-bar"></div>
             </div>
-            <p class="splash-text">Loading...</p>
+            <p class="splash-status">Initializing...</p>
+        </div>
+        <div class="splash-footer">
+            <p>Powered by Modern Technology</p>
         </div>
     </div>
 
-    <!-- Login Screen -->
+    <!-- ============================================
+         LOGIN SCREEN
+         ============================================ -->
     <div id="loginScreen" class="screen login-screen hidden">
+        <div class="login-background">
+            <div class="login-shape login-shape-1"></div>
+            <div class="login-shape login-shape-2"></div>
+            <div class="login-shape login-shape-3"></div>
+        </div>
+        
         <div class="login-container">
-            <div class="login-header">
-                <div class="login-logo">
-                    <img id="loginLogo" src="" alt="Logo">
+            <div class="login-card">
+                <!-- Login Header -->
+                <div class="login-header">
+                    <div class="login-logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <h1 class="login-title">Welcome Back!</h1>
+                    <p class="login-subtitle">Sign in to continue to Field Reporting</p>
                 </div>
-                <h1 class="login-title">Field Reporting Assist</h1>
-                <p class="login-subtitle">Login to continue</p>
+                
+                <!-- Error Message -->
+                <div id="loginError" class="login-error hidden">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="loginErrorText">Error message</span>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            User Code
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="text" 
+                                id="userCode" 
+                                class="form-input" 
+                                placeholder="Enter your user code"
+                                required 
+                                autocomplete="username"
+                                autocapitalize="off"
+                            >
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Password
+                        </label>
+                        <div class="input-wrapper password-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="form-input" 
+                                placeholder="Enter your password"
+                                required 
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <i class="fas fa-eye" id="passwordIcon"></i>
+                            </button>
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-mobile-alt"></i>
+                            Mobile Number
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="tel" 
+                                id="mobile" 
+                                class="form-input" 
+                                placeholder="10-digit mobile number"
+                                required 
+                                pattern="[0-9]{10}" 
+                                maxlength="10"
+                                autocomplete="tel"
+                                inputmode="numeric"
+                            >
+                            <span class="input-focus-border"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-label">Remember me</span>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" class="login-btn">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loader hidden">
+                            <i class="fas fa-circle-notch fa-spin"></i>
+                        </span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    </button>
+                </form>
+                
+                <!-- GPS Status -->
+                <div class="gps-status" id="gpsStatus">
+                    <div class="gps-indicator checking">
+                        <i class="fas fa-location-dot"></i>
+                    </div>
+                    <span id="gpsStatusText">Checking GPS...</span>
+                </div>
             </div>
             
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <div class="input-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <input type="text" id="userCode" placeholder="User Code" required autocomplete="username">
-                </div>
-                
-                <div class="input-group">
-                    <div class="input-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
-                    <div class="input-toggle" onclick="togglePassword()">
-                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <div class="input-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <input type="tel" id="mobile" placeholder="Mobile Number" required pattern="[0-9]{10}" maxlength="10">
-                </div>
-                
-                <div class="remember-me">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="rememberMe">
-                        <span class="checkmark"></span>
-                        Remember Me
-                    </label>
-                </div>
-                
-                <button type="submit" class="login-btn" id="loginBtn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>LOGIN</span>
-                </button>
-                
-                <div class="gps-status" id="gpsStatus">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>GPS Status: Checking...</span>
-                </div>
-            </form>
+            <div class="login-footer">
+                <p>© 2025 Field Reporting Assist</p>
+            </div>
         </div>
     </div>
 
-    <!-- Main App Screen -->
+    <!-- ============================================
+         MAIN APP SCREEN
+         ============================================ -->
     <div id="mainScreen" class="screen main-screen hidden">
-        <!-- Header -->
-        <header class="main-header">
+        <!-- App Header -->
+        <header class="app-header">
             <div class="header-left">
-                <img id="headerLogo" src="" alt="Logo" class="header-logo">
-                <span class="header-title">Field Reporting</span>
+                <div class="header-logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="header-brand">
+                    <span class="brand-name">Field Reporting</span>
+                    <span class="brand-tagline">Sales Automation</span>
+                </div>
             </div>
             <div class="header-right">
-                <div class="user-info" onclick="openTab('profile')">
-                    <img id="headerUserPhoto" src="" alt="User" class="user-avatar">
-                    <span id="headerUserName" class="user-name">User</span>
+                <button class="header-btn notification-btn" onclick="openTab('announcements')">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge hidden" id="notificationBadge">0</span>
+                </button>
+                <div class="header-avatar" onclick="openTab('profile')">
+                    <img id="headerAvatar" src="" alt="User" onerror="this.style.display='none'">
+                    <i class="fas fa-user" id="headerAvatarIcon"></i>
                 </div>
             </div>
         </header>
 
         <!-- Home Content -->
         <div id="homeContent" class="home-content">
-            <div class="welcome-card">
-                <div class="welcome-text">
-                    <h2>Welcome, <span id="welcomeName">User</span>!</h2>
-                    <p id="welcomeDate">Loading date...</p>
-                </div>
-                <div class="quick-stats">
-                    <div class="stat-item">
-                        <span class="stat-value" id="todayVisitsCount">0</span>
-                        <span class="stat-label">Visits</span>
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-card">
+                    <div class="welcome-info">
+                        <p class="welcome-greeting" id="welcomeGreeting">Good Morning!</p>
+                        <h2 class="welcome-name" id="welcomeName">User</h2>
+                        <p class="welcome-date" id="welcomeDate">Loading...</p>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="todayOrdersValue">₹0</span>
-                        <span class="stat-label">Orders</span>
+                    <div class="welcome-illustration">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-card stat-visits">
+                        <div class="stat-icon">
+                            <i class="fas fa-walking"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="statVisits">0</span>
+                            <span class="stat-label">Today's Visits</span>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-orders">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-value" id="statOrders">₹0</span>
+                            <span class="stat-label">Today's Orders</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="tabs-grid">
-                <div class="tab-card" onclick="openTab('punchInOut')">
-                    <div class="tab-icon punch-icon">
+            <!-- Punch Status Card -->
+            <div class="punch-status-card" id="punchStatusCard">
+                <div class="punch-info">
+                    <div class="punch-icon" id="punchIcon">
                         <i class="fas fa-fingerprint"></i>
                     </div>
-                    <span class="tab-label">Punch In/Out</span>
-                    <span class="tab-status" id="punchStatus">--</span>
-                </div>
-
-                <div class="tab-card" onclick="openTab('customers')">
-                    <div class="tab-icon customers-icon">
-                        <i class="fas fa-users"></i>
+                    <div class="punch-details">
+                        <span class="punch-label" id="punchLabel">Not Punched In</span>
+                        <span class="punch-time" id="punchTime">--:--</span>
                     </div>
-                    <span class="tab-label">Customers</span>
                 </div>
+                <button class="punch-action-btn" id="quickPunchBtn" onclick="openTab('punchInOut')">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
 
-                <div class="tab-card" onclick="openTab('stockist')">
-                    <div class="tab-icon stockist-icon">
-                        <i class="fas fa-store"></i>
+            <!-- Menu Grid -->
+            <div class="menu-section">
+                <h3 class="section-title">Quick Actions</h3>
+                <div class="menu-grid">
+                    <!-- Punch In/Out -->
+                    <div class="menu-card" onclick="openTab('punchInOut')">
+                        <div class="menu-icon-wrapper punch-gradient">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <span class="menu-label">Punch In/Out</span>
                     </div>
-                    <span class="tab-label">Stockist</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('todayVisits')">
-                    <div class="tab-icon visits-icon">
-                        <i class="fas fa-calendar-check"></i>
+                    <!-- Customers -->
+                    <div class="menu-card" onclick="openTab('customers')">
+                        <div class="menu-icon-wrapper customers-gradient">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="menu-label">Customers</span>
                     </div>
-                    <span class="tab-label">Today Visits</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('directPOB')">
-                    <div class="tab-icon pob-icon">
-                        <i class="fas fa-hand-holding-usd"></i>
+                    <!-- Stockist -->
+                    <div class="menu-card" onclick="openTab('stockist')">
+                        <div class="menu-icon-wrapper stockist-gradient">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <span class="menu-label">Stockist</span>
                     </div>
-                    <span class="tab-label">Direct POB</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('nearBy')">
-                    <div class="tab-icon nearby-icon">
-                        <i class="fas fa-map-marker-alt"></i>
+                    <!-- Today Visits -->
+                    <div class="menu-card" onclick="openTab('todayVisits')">
+                        <div class="menu-icon-wrapper visits-gradient">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <span class="menu-label">Today Visits</span>
                     </div>
-                    <span class="tab-label">Near By</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('expenses')">
-                    <div class="tab-icon expenses-icon">
-                        <i class="fas fa-receipt"></i>
+                    <!-- Direct POB -->
+                    <div class="menu-card" onclick="openTab('directPOB')">
+                        <div class="menu-icon-wrapper pob-gradient">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <span class="menu-label">Direct POB</span>
                     </div>
-                    <span class="tab-label">Expenses</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('tourPlan')">
-                    <div class="tab-icon tour-icon">
-                        <i class="fas fa-route"></i>
+                    <!-- Near By Customer -->
+                    <div class="menu-card" onclick="openTab('nearBy')">
+                        <div class="menu-icon-wrapper nearby-gradient">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <span class="menu-label">Near By</span>
                     </div>
-                    <span class="tab-label">Tour Plan</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('reports')">
-                    <div class="tab-icon reports-icon">
-                        <i class="fas fa-chart-bar"></i>
+                    <!-- Expenses -->
+                    <div class="menu-card" onclick="openTab('expenses')">
+                        <div class="menu-icon-wrapper expenses-gradient">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <span class="menu-label">Expenses</span>
                     </div>
-                    <span class="tab-label">Reports</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('dailyWork')">
-                    <div class="tab-icon daily-icon">
-                        <i class="fas fa-clipboard-list"></i>
+                    <!-- Tour Plan -->
+                    <div class="menu-card" onclick="openTab('tourPlan')">
+                        <div class="menu-icon-wrapper tour-gradient">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <span class="menu-label">Tour Plan</span>
                     </div>
-                    <span class="tab-label">Daily Work</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('nwDays')">
-                    <div class="tab-icon nw-icon">
-                        <i class="fas fa-calendar-times"></i>
+                    <!-- Reports -->
+                    <div class="menu-card" onclick="openTab('reports')">
+                        <div class="menu-icon-wrapper reports-gradient">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <span class="menu-label">Reports</span>
                     </div>
-                    <span class="tab-label">NW Days</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('profile')">
-                    <div class="tab-icon profile-icon">
-                        <i class="fas fa-user-circle"></i>
+                    <!-- Daily Work Reports -->
+                    <div class="menu-card" onclick="openTab('dailyWork')">
+                        <div class="menu-icon-wrapper daily-gradient">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <span class="menu-label">Daily Work</span>
                     </div>
-                    <span class="tab-label">Profile</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('masterRequest')">
-                    <div class="tab-icon master-icon">
-                        <i class="fas fa-user-plus"></i>
+                    <!-- NW Days -->
+                    <div class="menu-card" onclick="openTab('nwDays')">
+                        <div class="menu-icon-wrapper nw-gradient">
+                            <i class="fas fa-calendar-xmark"></i>
+                        </div>
+                        <span class="menu-label">NW Days</span>
                     </div>
-                    <span class="tab-label">Master Request</span>
-                </div>
 
-                <div class="tab-card" onclick="openTab('announcements')">
-                    <div class="tab-icon announce-icon">
-                        <i class="fas fa-bullhorn"></i>
+                    <!-- Profile -->
+                    <div class="menu-card" onclick="openTab('profile')">
+                        <div class="menu-icon-wrapper profile-gradient">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="menu-label">Profile</span>
                     </div>
-                    <span class="tab-label">Announcements</span>
-                    <span class="badge" id="announceBadge">0</span>
+
+                    <!-- Announcements -->
+                    <div class="menu-card" onclick="openTab('announcements')">
+                        <div class="menu-icon-wrapper announce-gradient">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <span class="menu-label">Announcements</span>
+                        <span class="menu-badge hidden" id="announceBadge">0</span>
+                    </div>
+
+                    <!-- Master Request -->
+                    <div class="menu-card" onclick="openTab('masterRequest')">
+                        <div class="menu-icon-wrapper master-gradient">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <span class="menu-label">Master Request</span>
+                    </div>
                 </div>
             </div>
 
-            <button class="sync-btn" onclick="manualSync()">
-                <i class="fas fa-sync-alt" id="syncIcon"></i>
-                <span>Sync Now</span>
-            </button>
+            <!-- Sync Button -->
+            <div class="sync-section">
+                <div class="sync-status">
+                    <i class="fas fa-cloud-check" id="syncStatusIcon"></i>
+                    <span id="lastSyncTime">Last sync: --</span>
+                </div>
+                <button class="sync-btn" id="syncBtn" onclick="manualSync()">
+                    <i class="fas fa-sync-alt" id="syncBtnIcon"></i>
+                    <span>Sync Now</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Tab Screens Container -->
-        <div id="tabContainer" class="tab-container hidden">
-            <!-- Dynamic content will be loaded here -->
-        </div>
+        <!-- Tab Container (for secondary screens) -->
+        <div id="tabContainer" class="tab-container hidden"></div>
     </div>
 
-    <!-- Loading Overlay -->
+    <!-- ============================================
+         SECONDARY SCREEN TEMPLATE
+         ============================================ -->
+    <template id="screenTemplate">
+        <div class="secondary-screen">
+            <header class="screen-header">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1 class="screen-title">Screen Title</h1>
+                <div class="screen-actions"></div>
+            </header>
+            <div class="screen-content"></div>
+        </div>
+    </template>
+
+    <!-- ============================================
+         LOADING OVERLAY
+         ============================================ -->
     <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Please wait...</p>
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <p class="loading-text" id="loadingText">Please wait...</p>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- ============================================
+         TOAST NOTIFICATION
+         ============================================ -->
     <div id="toast" class="toast hidden">
-        <i class="toast-icon fas fa-info-circle"></i>
+        <div class="toast-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
         <span class="toast-message">Message</span>
+        <button class="toast-close" onclick="hideToast()">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
+    <!-- ============================================
+         MODALS
+         ============================================ -->
     <!-- Alert Modal -->
     <div id="alertModal" class="modal hidden">
-        <div class="modal-content alert-modal">
-            <div class="modal-icon">
-                <i class="fas fa-exclamation-triangle"></i>
+        <div class="modal-backdrop" onclick="closeModal('alertModal')"></div>
+        <div class="modal-content modal-alert">
+            <div class="modal-header">
+                <div class="modal-icon alert-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
             </div>
-            <h3 class="modal-title">Alert</h3>
-            <p class="modal-message" id="alertMessage">Message here</p>
-            <button class="modal-btn" onclick="closeAlertModal()">OK</button>
+            <div class="modal-body">
+                <h3 class="modal-title" id="alertTitle">Alert</h3>
+                <p class="modal-message" id="alertMessage">Message</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" onclick="closeModal('alertModal')">
+                    OK
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Confirm Modal -->
     <div id="confirmModal" class="modal hidden">
-        <div class="modal-content confirm-modal">
-            <div class="modal-icon">
-                <i class="fas fa-question-circle"></i>
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <div class="modal-icon confirm-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
             </div>
-            <h3 class="modal-title" id="confirmTitle">Confirm</h3>
-            <p class="modal-message" id="confirmMessage">Are you sure?</p>
-            <div class="modal-buttons">
-                <button class="modal-btn cancel-btn" onclick="closeConfirmModal(false)">Cancel</button>
-                <button class="modal-btn confirm-btn" onclick="closeConfirmModal(true)">Confirm</button>
+            <div class="modal-body">
+                <h3 class="modal-title" id="confirmTitle">Confirm</h3>
+                <p class="modal-message" id="confirmMessage">Are you sure?</p>
             </div>
-        </div>
-    </div>
-
-    <!-- Session Expiry Warning Modal -->
-    <div id="sessionModal" class="modal hidden">
-        <div class="modal-content session-modal">
-            <div class="modal-icon warning">
-                <i class="fas fa-clock"></i>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="handleConfirm(false)">
+                    Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="handleConfirm(true)">
+                    Confirm
+                </button>
             </div>
-            <h3 class="modal-title">Session Expiring</h3>
-            <p class="modal-message">You will be logged out in <span id="sessionCountdown">60</span> seconds due to inactivity.</p>
-            <button class="modal-btn" onclick="resetIdleTimer()">Stay Logged In</button>
         </div>
     </div>
 
     <!-- Camera Modal -->
     <div id="cameraModal" class="modal hidden">
-        <div class="modal-content camera-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-camera">
             <div class="camera-header">
-                <h3>Capture Selfie</h3>
-                <button class="close-btn" onclick="closeCameraModal()">
+                <h3>Take Selfie</h3>
+                <button class="camera-close" onclick="closeCamera()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="camera-container">
                 <video id="cameraVideo" autoplay playsinline></video>
                 <canvas id="cameraCanvas" class="hidden"></canvas>
-                <img id="capturedImage" class="hidden">
+                <img id="cameraPreview" class="hidden" alt="Preview">
             </div>
             <div class="camera-controls">
-                <button class="camera-btn capture-btn" id="captureBtn" onclick="capturePhoto()">
+                <button class="camera-btn camera-capture" id="captureBtn" onclick="capturePhoto()">
                     <i class="fas fa-camera"></i>
                 </button>
-                <button class="camera-btn retake-btn hidden" id="retakeBtn" onclick="retakePhoto()">
+                <button class="camera-btn camera-retake hidden" id="retakeBtn" onclick="retakePhoto()">
                     <i class="fas fa-redo"></i>
+                    Retake
                 </button>
-                <button class="camera-btn confirm-btn hidden" id="confirmPhotoBtn" onclick="confirmPhoto()">
+                <button class="camera-btn camera-use hidden" id="usePhotoBtn" onclick="usePhoto()">
                     <i class="fas fa-check"></i>
+                    Use Photo
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- ============================================
+         SCRIPTS
+         ============================================ -->
+    <!-- Leaflet JS (for maps) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Main App Script -->
     <script src="app.js"></script>
 </body>
 </html>
