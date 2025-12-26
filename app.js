@@ -5,68 +5,75 @@
 
 // API Configuration
 const API_URL = 'https://script.google.com/macros/s/AKfycbyimeEt2uytqh5ECIb-0KLgtESHZRWc9UQn7MwR_uqnXrYQxmwyNkXZUeFzEyGTjvhRuQ/exec';
+
 // ============================================
 // API CALL FUNCTION - THIS WAS MISSING!
 // ============================================
 
-async function apiCall(params) {
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyimeEt2uytqh5ECIb-0KLgtESHZRWc9UQn7MwR_uqnXrYQxmwyNkXZUeFzEyGTjvhRuQ/exec';
-    
+async function apiCall(data) {
     try {
-        // Create form data for POST request
-        const formData = new FormData();
-        formData.append('data', JSON.stringify(params));
+        console.log('API Call:', data.action, data);
         
         const response = await fetch(API_URL, {
             method: 'POST',
-            body: formData
+            mode: 'cors',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            redirect: 'follow',
+            body: JSON.stringify(data)
         });
         
         // Check if response is ok
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        // Parse JSON response
         const result = await response.json();
+        console.log('API Response:', result);
         return result;
         
     } catch (error) {
         console.error('API Call Error:', error);
         
-        // Try alternative method with URL params (GET)
+        // Try alternative approach with GET
         try {
-            const queryString = encodeURIComponent(JSON.stringify(params));
-            const getResponse = await fetch(`${API_URL}?data=${queryString}`, {
+            console.log('Trying GET fallback...');
+            const params = new URLSearchParams();
+            params.append('data', JSON.stringify(data));
+            
+            const getResponse = await fetch(`${API_URL}?${params.toString()}`, {
                 method: 'GET',
                 redirect: 'follow'
             });
             
             const text = await getResponse.text();
+            console.log('GET Response text:', text);
             
-            // Try to parse as JSON
             try {
                 return JSON.parse(text);
-            } catch (e) {
-                // If not JSON, return error
+            } catch (parseError) {
+                console.error('Parse error:', parseError);
                 throw new Error('Invalid response from server');
             }
             
         } catch (getError) {
-            console.error('GET fallback also failed:', getError);
-            throw new Error('Network error. Please check your connection.');
+            console.error('GET fallback failed:', getError);
+            throw new Error('Network error. Please check your internet connection and try again.');
         }
     }
 }
 
-// Alternative apiCall for specific action format
-async function apiCallAction(action, data = {}) {
-    const payload = {
-        action: action,
-        ...data
-    };
-    return await apiCall(payload);
+// ============================================
+// ALSO ADD: formatNumber function if missing
+// ============================================
+
+function formatNumber(num) {
+    if (num === undefined || num === null) return '0';
+    return parseFloat(num).toLocaleString('en-IN');
 }
+
 // App State
 let appState = {
     isLoggedIn: false,
