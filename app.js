@@ -5,7 +5,68 @@
 
 // API Configuration
 const API_URL = 'https://script.google.com/macros/s/AKfycbyimeEt2uytqh5ECIb-0KLgtESHZRWc9UQn7MwR_uqnXrYQxmwyNkXZUeFzEyGTjvhRuQ/exec';
+// ============================================
+// API CALL FUNCTION - THIS WAS MISSING!
+// ============================================
 
+async function apiCall(params) {
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyimeEt2uytqh5ECIb-0KLgtESHZRWc9UQn7MwR_uqnXrYQxmwyNkXZUeFzEyGTjvhRuQ/exec';
+    
+    try {
+        // Create form data for POST request
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(params));
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+        });
+        
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        // Parse JSON response
+        const result = await response.json();
+        return result;
+        
+    } catch (error) {
+        console.error('API Call Error:', error);
+        
+        // Try alternative method with URL params (GET)
+        try {
+            const queryString = encodeURIComponent(JSON.stringify(params));
+            const getResponse = await fetch(`${API_URL}?data=${queryString}`, {
+                method: 'GET',
+                redirect: 'follow'
+            });
+            
+            const text = await getResponse.text();
+            
+            // Try to parse as JSON
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                // If not JSON, return error
+                throw new Error('Invalid response from server');
+            }
+            
+        } catch (getError) {
+            console.error('GET fallback also failed:', getError);
+            throw new Error('Network error. Please check your connection.');
+        }
+    }
+}
+
+// Alternative apiCall for specific action format
+async function apiCallAction(action, data = {}) {
+    const payload = {
+        action: action,
+        ...data
+    };
+    return await apiCall(payload);
+}
 // App State
 let appState = {
     isLoggedIn: false,
