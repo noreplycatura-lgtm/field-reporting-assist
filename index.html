@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4A90E2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Field Reporting Assist</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <img id="splashLogo" src="" alt="Logo">
+            </div>
+            <h1 class="splash-title">Field Reporting Assist</h1>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+            <p class="splash-text">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen login-screen hidden">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">
+                    <img id="loginLogo" src="" alt="Logo">
+                </div>
+                <h1 class="login-title">Field Reporting Assist</h1>
+                <p class="login-subtitle">Login to continue</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <input type="text" id="userCode" placeholder="User Code" required autocomplete="username">
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                    <div class="input-toggle" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="passwordToggleIcon"></i>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <input type="tel" id="mobile" placeholder="Mobile Number" required pattern="[0-9]{10}" maxlength="10">
+                </div>
+                
+                <div class="remember-me">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        Remember Me
+                    </label>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>LOGIN</span>
+                </button>
+                
+                <div class="gps-status" id="gpsStatus">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>GPS Status: Checking...</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="mainScreen" class="screen main-screen hidden">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <img id="headerLogo" src="" alt="Logo" class="header-logo">
+                <span class="header-title">Field Reporting</span>
+            </div>
+            <div class="header-right">
+                <div class="user-info" onclick="openTab('profile')">
+                    <img id="headerUserPhoto" src="" alt="User" class="user-avatar">
+                    <span id="headerUserName" class="user-name">User</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Home Content -->
+        <div id="homeContent" class="home-content">
+            <div class="welcome-card">
+                <div class="welcome-text">
+                    <h2>Welcome, <span id="welcomeName">User</span>!</h2>
+                    <p id="welcomeDate">Loading date...</p>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="todayVisitsCount">0</span>
+                        <span class="stat-label">Visits</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="todayOrdersValue">₹0</span>
+                        <span class="stat-label">Orders</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs-grid">
+                <div class="tab-card" onclick="openTab('punchInOut')">
+                    <div class="tab-icon punch-icon">
+                        <i class="fas fa-fingerprint"></i>
+                    </div>
+                    <span class="tab-label">Punch In/Out</span>
+                    <span class="tab-status" id="punchStatus">--</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('customers')">
+                    <div class="tab-icon customers-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <span class="tab-label">Customers</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('stockist')">
+                    <div class="tab-icon stockist-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <span class="tab-label">Stockist</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('todayVisits')">
+                    <div class="tab-icon visits-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <span class="tab-label">Today Visits</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('directPOB')">
+                    <div class="tab-icon pob-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <span class="tab-label">Direct POB</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('nearBy')">
+                    <div class="tab-icon nearby-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <span class="tab-label">Near By</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('expenses')">
+                    <div class="tab-icon expenses-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <span class="tab-label">Expenses</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('tourPlan')">
+                    <div class="tab-icon tour-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <span class="tab-label">Tour Plan</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('reports')">
+                    <div class="tab-icon reports-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <span class="tab-label">Reports</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('dailyWork')">
+                    <div class="tab-icon daily-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <span class="tab-label">Daily Work</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('nwDays')">
+                    <div class="tab-icon nw-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <span class="tab-label">NW Days</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('profile')">
+                    <div class="tab-icon profile-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <span class="tab-label">Profile</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('masterRequest')">
+                    <div class="tab-icon master-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <span class="tab-label">Master Request</span>
+                </div>
+
+                <div class="tab-card" onclick="openTab('announcements')">
+                    <div class="tab-icon announce-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <span class="tab-label">Announcements</span>
+                    <span class="badge" id="announceBadge">0</span>
+                </div>
+            </div>
+
+            <button class="sync-btn" onclick="manualSync()">
+                <i class="fas fa-sync-alt" id="syncIcon"></i>
+                <span>Sync Now</span>
+            </button>
+        </div>
+
+        <!-- Tab Screens Container -->
+        <div id="tabContainer" class="tab-container hidden">
+            <!-- Dynamic content will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <i class="toast-icon fas fa-info-circle"></i>
+        <span class="toast-message">Message</span>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="modal hidden">
+        <div class="modal-content alert-modal">
+            <div class="modal-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="modal-title">Alert</h3>
+            <p class="modal-message" id="alertMessage">Message here</p>
+            <button class="modal-btn" onclick="closeAlertModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content confirm-modal">
+            <div class="modal-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 class="modal-title" id="confirmTitle">Confirm</h3>
+            <p class="modal-message" id="confirmMessage">Are you sure?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" onclick="closeConfirmModal(false)">Cancel</button>
+                <button class="modal-btn confirm-btn" onclick="closeConfirmModal(true)">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Session Expiry Warning Modal -->
+    <div id="sessionModal" class="modal hidden">
+        <div class="modal-content session-modal">
+            <div class="modal-icon warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="modal-title">Session Expiring</h3>
+            <p class="modal-message">You will be logged out in <span id="sessionCountdown">60</span> seconds due to inactivity.</p>
+            <button class="modal-btn" onclick="resetIdleTimer()">Stay Logged In</button>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="modal hidden">
+        <div class="modal-content camera-modal">
+            <div class="camera-header">
+                <h3>Capture Selfie</h3>
+                <button class="close-btn" onclick="closeCameraModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="camera-container">
+                <video id="cameraVideo" autoplay playsinline></video>
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+                <img id="capturedImage" class="hidden">
+            </div>
+            <div class="camera-controls">
+                <button class="camera-btn capture-btn" id="captureBtn" onclick="capturePhoto()">
+                    <i class="fas fa-camera"></i>
+                </button>
+                <button class="camera-btn retake-btn hidden" id="retakeBtn" onclick="retakePhoto()">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="camera-btn confirm-btn hidden" id="confirmPhotoBtn" onclick="confirmPhoto()">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
